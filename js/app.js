@@ -5,6 +5,48 @@ function Seguro(marca, year, tipo) {
     this.tipo = tipo;
 }
 
+Seguro.prototype.cotizarSeguro = function() {
+    /**
+     * 1 = Americano 1.15
+     * 2 = Asiático 1.05
+     * 3 = Europeo 1.35
+     */
+
+    let cantidad;
+    const base = 2000;
+    switch (this.marca) {
+        case "1":
+            cantidad = base * 1.15;
+            break;
+        case "2":
+            cantidad = base * 1.05;
+            break;
+        case "3":
+            cantidad = base * 1.35;
+            break;
+
+        default:
+            break;
+    }
+
+    // Leer el año
+    const diferencia = new Date().getFullYear() - this.year;
+    // Cada año que la diferencia es mayor el costo se va a reducir un 3%
+    cantidad -= (diferencia * 3 * cantidad) / 100;
+
+    /**
+     * Si el seguro es básico se multiplica por un 30% más
+     * Si el seguro es básico se multiplica por un 50% más
+     */
+
+    if (this.tipo === "basico") cantidad *= 1.3;
+    else cantidad *= 1.5;
+
+    return cantidad;
+
+    console.log(cantidad);
+};
+
 function UI() {}
 
 // llena las opciones de los años
@@ -23,24 +65,24 @@ UI.prototype.llenarOpciones = () => {
 
 // muestra alertas en pantalla
 UI.prototype.mostarMensaje = function(mensaje, tipo) {
-    const div = document.createElement('div');
-    if (tipo === 'error') {
-        div.classList.add('error');
+    const div = document.createElement("div");
+    if (tipo === "error") {
+        div.classList.add("error");
     } else {
-        div.classList.add('correcto');
+        div.classList.add("correcto");
     }
 
-    div.classList.add('mensaje', 'mt-10');
+    div.classList.add("mensaje", "mt-10");
     div.textContent = mensaje;
 
     // insertar en el HTML
     const formulario = document.querySelector("#cotizar-seguro");
-    formulario.insertBefore(div, document.querySelector('#resultado'));
+    formulario.insertBefore(div, document.querySelector("#resultado"));
 
     setTimeout(() => {
-        div.remove()
+        div.remove();
     }, 3000);
-}
+};
 
 // instanciar UI
 const ui = new UI();
@@ -68,13 +110,14 @@ function cotizarSeguro(e) {
     // Leer el tipo de cobertura
     const tipo = document.querySelector('input[name="tipo"]:checked').value;
 
-    if (marca === '' || year === '' || tipo === '') {
-        ui.mostarMensaje('Todos los campos son obligatorios', 'error');
-        return
+    if (marca === "" || year === "" || tipo === "") {
+        ui.mostarMensaje("Todos los campos son obligatorios", "error");
+        return;
     }
-    ui.mostarMensaje('Cotizando...');
+    ui.mostarMensaje("Cotizando...");
 
     // Instanciar el seguro
-
+    const seguro = new Seguro(marca, year, tipo);
+    seguro.cotizarSeguro();
     // Utilizar el prototype que va a cotizar
 }
